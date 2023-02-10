@@ -35,12 +35,7 @@ class IOSAppOptions extends AppOptions {
     final cmd = [
       ...['flutter', 'build', 'ios'],
       '--no-version-check',
-      ...[
-        '--config-only',
-        '--no-codesign',
-        '--debug',
-        if (!device.real) '--simulator'
-      ],
+      ...['--config-only', '--no-codesign', '--debug', if (!device.real) '--simulator'],
       if (flavor != null) ...['--flavor', flavor!],
       ...['--target', target],
       for (final dartDefine in dartDefines.entries) ...[
@@ -90,7 +85,7 @@ class IOSAppOptions extends AppOptions {
         else
           join(
             prefix,
-            'Runner_iphonesimulator$sdkVersion-arm64-x86_64.xctestrun',
+            'Runner_iphonesimulator$sdkVersion-x86_64.xctestrun',
           )
       ],
       ...[
@@ -129,8 +124,7 @@ class IOSTestBackend extends TestBackend {
   @override
   Future<void> build(IOSAppOptions options, Device device) async {
     await _disposeScope.run((scope) async {
-      final subject =
-          '${options.description} for ${device.platformDescription}';
+      final subject = '${options.description} for ${device.platformDescription}';
       final task = _logger.task('Building $subject');
 
       Process process;
