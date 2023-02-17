@@ -1,12 +1,20 @@
 # Patrol
 
+[![patrol on pub.dev][patrol_badge]][patrol_link]
+[![patrol_cli on pub.dev][patrol_cli_badge]][patrol_cli_link]
+[![code style][leancode_lint_badge]][leancode_lint_link]
+[![powered by][docs_page_badge]][docs_page_link]
+
+![Patrol promotial graphics][promo_graphics]
+
 Simple yet powerful Flutter-native UI testing framework eliminating limitations
 of `flutter_test`, `integration_test`, and `flutter_driver`.
 
-[![patrol on pub.dev][patrol_badge]][patrol_link] [![patrol_cli on
-pub.dev][patrol_cli_badge]][patrol_cli_link] [![code
-style][leancode_lint_badge]][leancode_lint_link] [![powered
-by][docs_page_badge]][docs_page_link]
+Learn more about Patrol:
+
+- [Our extensive documentation][docs]
+- [The article about the first public release][article_0x]
+- [The first stable 1.0 release article][article_1x]
 
 ## Patrol custom finders
 
@@ -64,7 +72,7 @@ patrolTest('signs up', (PatrolTester $) async {
 });
 ```
 
-Learn more in our [extensive documentation][patrol_docs]!
+[Learn more about custom finders in the docs][docs_finders]!
 
 ## CLI
 
@@ -89,4 +97,8 @@ See [packages/patrol][github_patrol].
 [leancode_lint_link]: https://pub.dev/packages/leancode_lint
 [docs_page_badge]: https://img.shields.io/badge/documentation-docs.page-34C4AC.svg?style
 [docs_page_link]: https://docs.page
-[patrol_docs]: https://patrol.leancode.co
+[docs]: https://patrol.leancode.co
+[docs_finders]: https://patrol.leancode.co/finders/overview
+[promo_graphics]: docs/assets/promo.png
+[article_0x]: https://leancode.co/blog/patrol-flutter-first-ui-testing-framework
+[article_1x]: https://leancode.co/blog/patrol-1-0-powerful-flutter-ui-testing-framework

@@ -1,0 +1,97 @@
+name: test android device
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 21 * * *'
+
+jobs:
+  main:
+    name: Test on Android device on Firebase Test Lab
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    defaults:
+      run:
+        working-directory: packages/patrol/example
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+
+      - name: Install Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 11
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY_JSON }}'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Gradle cache
+        uses: gradle/gradle-build-action@v2
+        with:
+          generate-job-summary: false
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ matrix.flutter-channel }}
+
+      - name: Preload Flutter artifacts
+        run: flutter precache
+
+      - name: Generate Gradle wrapper
+        run: flutter build apk --debug --flavor=does-not-exist || true
+
+      - run: ./run_android_testlab integration_test/android_app_test.dart
+
+      - run: ./run_android_testlab integration_test/example_test.dart
+        if: success() || failure()
+
+      - run: ./run_android_testlab integration_test/notifications_test.dart
+        if: success() || failure()
+
+      - run: ./run_android_testlab integration_test/open_app_test.dart
+        if: success() || failure()
+
+      - run: ./run_android_testlab integration_test/open_quick_settings_test.dart
+        if: success() || failure()
+
+      - run: ./run_android_testlab integration_test/permissions_location_test.dart
+        if: ${{ false }} # Doesn't handle the "Google location services" popup
+
+      - run: ./run_android_testlab integration_test/permissions_many_test.dart
+        if: success() || failure()
+
+      - run: ./run_android_testlab integration_test/service_airplane_mode_test.dart
+        if: ${{ false }} # Not implemented on Android
+
+      - run: ./run_android_testlab integration_test/service_bluetooth_test.dart
+        if: ${{ false }} # Not implemented on Android
+
+      - run: ./run_android_testlab integration_test/service_cellular_test.dart
+        if: success() || failure()
+
+      - run: ./run_android_testlab integration_test/service_dark_mode_test.dart
+        if: success() || failure()
+
+      - run: ./run_android_testlab integration_test/service_wifi_test.dart
+        if: success() || failure()
+
+      - run: ./run_android_testlab integration_test/swipe_test.dart
+        if: success() || failure()
+
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_USERNAME: Firebase Test Lab
+          SLACK_ICON: https://lh3.googleusercontent.com/gi3juiFPUx9A8vMvHqozISdrbTy-Rg6gjecG9k0J_Wnz_GJktwfkHu3iRpu8RFb8nAWSAjIZX0HEm0fO1ZNChQ
+          SLACK_TITLE: Android test status
+          SLACK_MESSAGE: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
